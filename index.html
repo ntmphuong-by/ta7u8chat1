@@ -1,0 +1,2138 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Global Success 7 - Unit 8 FILMS (Offline Game)</title>
+  <style>
+    :root{
+      --bg:#f6f8fb;
+      --card:#ffffff;
+      --ink:#162235;
+      --muted:#637083;
+      --brand:#ff8a00;
+      --brand2:#0aa0a6;
+      --ok:#16a34a;
+      --bad:#dc2626;
+      --line:#e6edf5;
+      --shadow:0 10px 30px rgba(22,34,53,.08);
+      --radius:18px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+      --sans: system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--ink);
+      background:linear-gradient(180deg,#fff 0%, var(--bg) 35%, var(--bg) 100%);
+    }
+    header{
+      position:sticky; top:0; z-index:50;
+      background:rgba(255,255,255,.92);
+      backdrop-filter: blur(10px);
+      border-bottom:1px solid var(--line);
+    }
+    .wrap{max-width:1100px;margin:0 auto;padding:14px 14px}
+    .topbar{
+      display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+      justify-content:space-between;
+    }
+    .brand{
+      display:flex; align-items:center; gap:12px; min-width:260px;
+    }
+    .badge{
+      width:48px;height:48px;border-radius:14px;
+      display:grid;place-items:center;
+      background:linear-gradient(135deg,var(--brand),#ffb300);
+      color:#fff;font-weight:900;font-size:18px;
+      box-shadow:0 10px 30px rgba(255,138,0,.25);
+    }
+    .title h1{margin:0;font-size:16px;letter-spacing:.2px}
+    .title div{margin-top:2px;color:var(--muted);font-size:12px}
+    .controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+    .pill{
+      display:flex;align-items:center;gap:8px;
+      padding:8px 10px;border:1px solid var(--line);border-radius:999px;
+      background:#fff; box-shadow:0 6px 16px rgba(22,34,53,.06);
+      font-size:13px; color:var(--muted);
+    }
+    .pill strong{color:var(--ink)}
+    .btn{
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:12px;
+      padding:10px 12px;
+      font-weight:700;
+      cursor:pointer;
+      box-shadow:0 8px 20px rgba(22,34,53,.06);
+      transition:.15s transform,.15s box-shadow,.15s background;
+      user-select:none;
+    }
+    .btn:hover{transform:translateY(-1px);box-shadow:0 10px 24px rgba(22,34,53,.10)}
+    .btn:active{transform:translateY(0px);box-shadow:0 6px 14px rgba(22,34,53,.08)}
+    .btn.primary{
+      background:linear-gradient(135deg,var(--brand),#ffb300);
+      color:#fff; border-color:transparent;
+    }
+    .btn.ghost{background:transparent}
+    .btn.warn{background:#fff7ed;border-color:#fed7aa}
+    .btn.ok{background:#ecfdf5;border-color:#bbf7d0}
+    .btn.danger{background:#fef2f2;border-color:#fecaca}
+    .progress{
+      width:260px; max-width:70vw;
+      height:10px;border-radius:999px;
+      background:#eef2f7; overflow:hidden; border:1px solid var(--line);
+    }
+    .bar{height:100%; width:0%; background:linear-gradient(90deg,var(--brand2),#22c55e)}
+    main{padding:18px 0 26px}
+    .grid{
+      display:grid; grid-template-columns: 320px 1fr; gap:16px;
+      align-items:start;
+    }
+    @media (max-width: 920px){
+      .grid{grid-template-columns: 1fr}
+    }
+    .panel{
+      background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .panel .hd{
+      padding:14px 14px 10px 14px;
+      border-bottom:1px solid var(--line);
+      background:linear-gradient(180deg,#fff, #fff7ef);
+    }
+    .panel .hd h2{margin:0;font-size:14px}
+    .panel .hd p{margin:6px 0 0 0;color:var(--muted);font-size:12px;line-height:1.35}
+    .nav{
+      padding:10px;
+      display:flex; flex-direction:column; gap:8px;
+      max-height: calc(100vh - 150px);
+      overflow:auto;
+    }
+    .nav .item{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px 10px;
+      background:#fff;
+      cursor:pointer;
+      display:flex; gap:10px; align-items:flex-start;
+      transition:.12s background,.12s transform;
+    }
+    .nav .item:hover{background:#f8fbff; transform:translateY(-1px)}
+    .nav .dot{
+      width:10px;height:10px;border-radius:99px;margin-top:4px;
+      background:#cbd5e1;
+      flex:0 0 auto;
+    }
+    .nav .item.active{border-color:#ffd29a;background:#fff7ed}
+    .nav .item.active .dot{background:var(--brand)}
+    .nav .item.done .dot{background:var(--ok)}
+    .nav .t{font-weight:800;font-size:13px}
+    .nav .s{color:var(--muted);font-size:12px;margin-top:2px;line-height:1.25}
+    .content{
+      padding:14px;
+    }
+    .sectionTitle{
+      display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+      padding:4px 2px 12px;
+      border-bottom:1px dashed var(--line);
+      margin-bottom:12px;
+    }
+    .sectionTitle h3{margin:0;font-size:16px}
+    .sectionTitle .meta{color:var(--muted);font-size:12px}
+    .card{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px;
+      background:#fff;
+      box-shadow:0 8px 20px rgba(22,34,53,.05);
+      margin:12px 0;
+    }
+    .card h4{margin:0 0 8px 0;font-size:14px}
+    .card .hint{color:var(--muted);font-size:12px;margin:2px 0 10px 0;line-height:1.35}
+    .qrow{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start}
+    .qnum{
+      font-family:var(--mono);
+      color:#0f172a;
+      background:#f1f5f9;border:1px solid var(--line);
+      padding:5px 8px;border-radius:10px;
+      font-size:12px;
+    }
+    .prompt{flex:1;min-width:240px}
+    .opts{margin-top:10px;display:grid;gap:8px}
+    .opt{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px;
+      display:flex;gap:10px;align-items:flex-start;
+      cursor:pointer;
+      background:#fff;
+      transition:.12s background,.12s border-color;
+      user-select:none;
+    }
+    .opt:hover{background:#f8fbff}
+    .opt input{margin-top:2px}
+    .opt .lbl{line-height:1.3}
+    .fill{
+      margin-top:10px;
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+    }
+    .input{
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:10px 12px;
+      width:min(520px, 100%);
+      font-size:14px;
+      outline:none;
+    }
+    .small{width:220px}
+    .select{
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:10px 12px;
+      font-size:14px;
+      background:#fff;
+      outline:none;
+    }
+    .explain{
+      margin-top:12px;
+      border-top:1px dashed var(--line);
+      padding-top:12px;
+      display:none;
+    }
+    .explain .row{display:grid;grid-template-columns: 1fr;gap:8px}
+    .tag{
+      display:inline-flex;align-items:center;gap:6px;
+      padding:5px 10px;border-radius:999px;
+      font-size:12px;font-weight:800;
+      border:1px solid var(--line);
+      background:#f8fafc;
+    }
+    .tag.ok{background:#ecfdf5;border-color:#bbf7d0;color:#166534}
+    .tag.bad{background:#fef2f2;border-color:#fecaca;color:#991b1b}
+    .mono{font-family:var(--mono)}
+    .kq{
+      margin-top:10px;
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+    }
+    .twoCol{
+      display:grid; grid-template-columns: 1fr 1fr; gap:12px;
+    }
+    @media (max-width: 720px){ .twoCol{grid-template-columns:1fr} }
+    .dialogue{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:12px;
+      background:linear-gradient(180deg,#fff,#fbfdff);
+    }
+    .dlgLine{margin:6px 0;line-height:1.35}
+    .speaker{font-weight:900}
+    .subtle{color:var(--muted);font-size:12px;line-height:1.35}
+    .matchWrap{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    @media (max-width:720px){ .matchWrap{grid-template-columns:1fr} }
+    .matchCol{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px;
+      background:#fff;
+    }
+    .matchCol h5{margin:0 0 8px 0;font-size:13px}
+    .pairRow{display:flex;gap:8px;align-items:center;margin:8px 0;flex-wrap:wrap}
+    .pairRow .left{min-width:160px;font-weight:800}
+    .pairRow select{flex:1}
+    .footerActions{
+      display:flex; gap:10px; flex-wrap:wrap;
+      padding:12px 14px;
+      border-top:1px solid var(--line);
+      background:#fff;
+      position:sticky; bottom:0;
+    }
+    .toast{
+      position:fixed;right:14px;bottom:14px;z-index:9999;
+      background:#0f172a;color:#fff;
+      padding:10px 12px;border-radius:14px;
+      box-shadow:0 18px 50px rgba(0,0,0,.25);
+      font-size:13px;
+      display:none;
+      max-width:min(420px, calc(100vw - 28px));
+    }
+    .teacherBox{
+      display:flex;gap:8px;align-items:center;flex-wrap:wrap
+    }
+    .kbd{
+      font-family:var(--mono);
+      font-size:12px;
+      padding:4px 8px;
+      border:1px solid var(--line);
+      border-radius:10px;
+      background:#f8fafc;
+      color:#0f172a;
+      user-select:none;
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <div class="badge">U8</div>
+        <div class="title">
+          <h1>Global Success 7 • Unit 8: FILMS • Offline Game</h1>
+          <div>01 file HTML • Có nhạc nền WebAudio • Chấm điểm • Giải thích & Dịch Việt • Lưu tiến độ (localStorage)</div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div class="pill"><span>Điểm:</span> <strong id="scoreNow">0</strong>/<span id="scoreMax">0</span></div>
+        <div class="pill"><span>Thời gian:</span> <strong id="timeNow">00:00</strong></div>
+        <div class="pill" title="Tiến độ hoàn thành câu hỏi có chấm điểm">
+          <span>Tiến độ</span>
+          <div class="progress" aria-label="progress"><div class="bar" id="bar"></div></div>
+          <span class="mono" id="pct">0%</span>
+        </div>
+
+        <button class="btn" id="btnMusic" title="Bật/Tắt nhạc nền">Nhạc: TẮT</button>
+        <div class="pill" style="gap:10px">
+          <span>Âm lượng</span>
+          <input id="vol" type="range" min="0" max="100" value="35" />
+        </div>
+        <button class="btn ghost" id="btnSave">Lưu</button>
+        <button class="btn warn" id="btnReset">Làm lại</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="grid">
+    <section class="panel">
+      <div class="hd">
+        <h2>Mục lục Unit 8 (đúng theo các trang trong ảnh)</h2>
+        <p>
+          Gợi ý: làm theo thứ tự. Các câu có chấm điểm đều có nút <span class="kbd">Nộp</span>.
+          Phần “viết/đối thoại/nhóm” được giữ đúng nội dung nhưng không tự chấm (tự đối chiếu đáp án mẫu).
+        </p>
+      </div>
+      <div class="nav" id="nav"></div>
+      <div class="hd" style="border-top:1px solid var(--line)">
+        <h2>Chế độ giáo viên</h2>
+        <p>Nhập mã để bật “Xem đáp án” cho toàn bộ câu.</p>
+        <div class="teacherBox" style="margin-top:10px">
+          <input class="input small" id="teacherCode" placeholder="Nhập mã GV..." />
+          <button class="btn ok" id="btnTeacher">Mở khóa</button>
+          <span class="subtle">Mã mặc định: <span class="kbd">GVGS7</span></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="content" id="content"></div>
+      <div class="footerActions">
+        <button class="btn" id="btnPrev">◀ Trước</button>
+        <button class="btn primary" id="btnNext">Tiếp ▶</button>
+        <button class="btn" id="btnDetail">Xem kết quả chi tiết</button>
+      </div>
+    </section>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================
+   0) Utilities
+========================= */
+const LS_KEY = "GS7_U8_FILMS_GAME_V1";
+const TEACHER_PASS = "GVGS7";
+
+const now = () => Date.now();
+const pad2 = n => String(n).padStart(2,"0");
+const mmss = secs => `${pad2(Math.floor(secs/60))}:${pad2(secs%60)}`;
+
+function toast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.style.display = "block";
+  clearTimeout(toast._tm);
+  toast._tm = setTimeout(()=>t.style.display="none", 2200);
+}
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+function norm(s){
+  return (s??"")
+    .toString()
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g," ")
+    .replace(/[“”]/g,'"')
+    .replace(/[’]/g,"'");
+}
+function deepClone(o){ return JSON.parse(JSON.stringify(o)); }
+
+/* =========================
+   1) Background music (WebAudio, offline)
+========================= */
+let audioCtx=null, master=null, musicOn=false, musicNodes=[], musicTimer=null;
+let volEl = document.getElementById("vol");
+function getVolume(){
+  return Math.max(0, Math.min(1, Number(volEl.value)/100));
+}
+function ensureAudio(){
+  if(audioCtx) return;
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  master = audioCtx.createGain();
+  master.gain.value = getVolume();
+  master.connect(audioCtx.destination);
+}
+function stopMusic(){
+  musicNodes.forEach(n=>{ try{ n.stop && n.stop(); }catch(e){} });
+  musicNodes = [];
+  if(musicTimer){ clearInterval(musicTimer); musicTimer=null; }
+}
+function playMusic(){
+  ensureAudio();
+  stopMusic();
+
+  // Simple upbeat loop: chord pad + light pluck
+  const tempo = 112; // bpm
+  const beat = 60/tempo;
+  const startAt = audioCtx.currentTime + 0.05;
+
+  const chordProg = [
+    [261.63,329.63,392.00], // C
+    [293.66,369.99,440.00], // Dm-ish
+    [329.63,415.30,493.88], // Em-ish
+    [349.23,440.00,523.25], // F
+  ];
+
+  function padChord(chord, t, dur){
+    chord.forEach(freq=>{
+      const o = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      o.type="sine";
+      o.frequency.value=freq;
+      g.gain.setValueAtTime(0.0001,t);
+      g.gain.exponentialRampToValueAtTime(0.12,t+0.05);
+      g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+      o.connect(g); g.connect(master);
+      o.start(t); o.stop(t+dur+0.02);
+      musicNodes.push(o);
+    });
+  }
+
+  function pluck(freq, t){
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type="triangle"; o.frequency.value=freq;
+    g.gain.setValueAtTime(0.0001,t);
+    g.gain.exponentialRampToValueAtTime(0.10,t+0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+0.15);
+    o.connect(g); g.connect(master);
+    o.start(t); o.stop(t+0.18);
+    musicNodes.push(o);
+  }
+
+  // schedule ~ 2 bars loop
+  const bars = 4;
+  const beatsPerBar = 4;
+  const totalBeats = bars*beatsPerBar;
+  for(let b=0;b<totalBeats;b++){
+    const barIndex = Math.floor(b/beatsPerBar);
+    const t = startAt + b*beat;
+    if(b%4===0){ // chord each bar
+      padChord(chordProg[barIndex%chordProg.length], t, beat*4);
+    }
+    // pluck on off-beats
+    if(b%2===1){
+      const chord = chordProg[barIndex%chordProg.length];
+      pluck(chord[Math.floor(Math.random()*chord.length)]*2, t);
+    }
+  }
+
+  // loop re-schedule
+  const loopSeconds = totalBeats*beat;
+  musicTimer = setInterval(()=>{
+    if(!musicOn) return;
+    try{
+      const base = audioCtx.currentTime + 0.05;
+      for(let b=0;b<totalBeats;b++){
+        const barIndex = Math.floor(b/beatsPerBar);
+        const t = base + b*beat;
+        if(b%4===0){ padChord(chordProg[barIndex%chordProg.length], t, beat*4); }
+        if(b%2===1){
+          const chord = chordProg[barIndex%chordProg.length];
+          pluck(chord[Math.floor(Math.random()*chord.length)]*2, t);
+        }
+      }
+    }catch(e){}
+  }, loopSeconds*1000 - 60);
+}
+function setMusic(on){
+  musicOn = !!on;
+  if(musicOn){
+    playMusic();
+    document.getElementById("btnMusic").textContent = "Nhạc: BẬT";
+  }else{
+    stopMusic();
+    document.getElementById("btnMusic").textContent = "Nhạc: TẮT";
+  }
+  saveState();
+}
+document.getElementById("btnMusic").addEventListener("click", async ()=>{
+  ensureAudio();
+  if(audioCtx.state === "suspended") await audioCtx.resume();
+  setMusic(!musicOn);
+});
+volEl.addEventListener("input", ()=>{
+  if(master) master.gain.value = getVolume();
+  saveState();
+});
+
+/* =========================
+   2) Speech (for Listening / Pronunciation) - offline
+========================= */
+function speak(text, rate=0.95){
+  if(!("speechSynthesis" in window)) { toast("Thiết bị không hỗ trợ đọc TTS."); return; }
+  const u = new SpeechSynthesisUtterance(text);
+  u.rate = rate;
+  u.lang = "en-US";
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(u);
+}
+
+/* =========================
+   3) Data: Unit 8 (from images)
+   - Objective items are graded (1 point each)
+   - Practice items are ungraded but have sample answers
+========================= */
+const DATA = [
+  {
+    id:"GS",
+    title:"GETTING STARTED • Let’s go to the cinema tonight!",
+    subtitle:"Listen and read + hiểu bài hội thoại + từ vựng phim",
+    blocks:[
+      {
+        type:"dialogue",
+        title:"1. Listen and read",
+        audioHint:"(Có thể bấm “Nghe TTS” để nghe đọc hội thoại)",
+        ttsText:
+`Mark: Let's go to the cinema tonight!
+Mi: Good idea! What shall we see?
+Mark: A Nightmare is on at Sao Mai Cinema tonight.
+Mi: Is it a note? Is it a fantasy?
+Mark: No, it's a horror film.
+Mi: That's too scary for me. Look! An Old Pier is on at Town Cinema. It's a documentary.
+Mark: I don't really like documentaries. They're often boring. What about Our Holiday?
+Mi: What kind of film is it?
+Mark: It's a comedy.
+Mi: And who stars in it?
+Mark: Kate Harrison and Lily Collins.
+Mi: Um, they're pretty good. What's it about?
+Mark: It's about two women living in different countries and they decide to exchange houses.
+Mi: What are the reviews like?
+Mark: Well, although a few people say it's a bit silly, most say it's funny and interesting.`,
+        lines:[
+          ["Mark","Let’s go to the cinema tonight!"],
+          ["Mi","Good idea! What shall we see?"],
+          ["Mark","A Nightmare is on at Sao Mai Cinema tonight."],
+          ["Mi","Is it a fantasy?"],
+          ["Mark","No, it’s a horror film."],
+          ["Mi","That’s too scary for me. Look! An Old Pier is on at Town Cinema. It’s a documentary."],
+          ["Mark","I don’t really like documentaries. They’re often boring. What about Our Holiday?"],
+          ["Mi","What kind of film is it?"],
+          ["Mark","It’s a comedy."],
+          ["Mi","And who stars in it?"],
+          ["Mark","Kate Harrison and Lily Collins."],
+          ["Mi","Um, they’re pretty good. What’s it about?"],
+          ["Mark","It’s about two women living in different countries and they decide to exchange houses."],
+          ["Mi","What are the reviews like?"],
+          ["Mark","Well, although a few people say it’s a bit silly, most say it’s funny and interesting."]
+        ],
+        viTranslation:
+`Dịch Việt (gợi ý):
+- Mark: Tối nay đi rạp chiếu phim nhé!
+- Mi: Ý hay đấy! Chúng ta xem gì?
+- Mark: “A Nightmare” đang chiếu ở rạp Sao Mai tối nay.
+- Mi: Có phải phim giả tưởng không?
+- Mark: Không, đó là phim kinh dị.
+- Mi: Đáng sợ quá với mình. Nhìn này! “An Old Pier” đang chiếu ở rạp Town. Đó là phim tài liệu.
+- Mark: Mình không thực sự thích phim tài liệu. Chúng thường chán. Thế còn “Our Holiday”?
+- Mi: Nó thuộc thể loại gì?
+- Mark: Đó là phim hài.
+- Mi: Ai đóng vai chính?
+- Mark: Kate Harrison và Lily Collins.
+- Mi: Ừm, họ khá hay. Nội dung nói về gì?
+- Mark: Phim nói về hai người phụ nữ sống ở hai nước khác nhau và họ quyết định đổi nhà cho nhau.
+- Mi: Mọi người đánh giá phim thế nào?
+- Mark: À, mặc dù một vài người nói phim hơi ngớ ngẩn, nhưng đa số nói phim vui và thú vị.`
+      },
+
+      // Exercise 2 (MCQ)
+      {
+        type:"mcqGroup",
+        title:"2. Read the conversation again and choose the correct answer",
+        graded:true,
+        questions:[
+          {
+            id:"GS-2-1",
+            prompt:"What does Mark suggest doing tonight?",
+            options:["Watching a TV show.","Watching a film.","Staying at home."],
+            answer:"Watching a film.",
+            explain:"Mark says: “Let’s go to the cinema tonight!” => đi xem phim.",
+            vi:"Mark gợi ý làm gì tối nay? → Đi xem phim."
+          },
+          {
+            id:"GS-2-2",
+            prompt:"Why doesn’t Mark want to see An Old Pier?",
+            options:["He doesn’t like that type of film.","It’s not on at a convenient time.","He saw it last week."],
+            answer:"He doesn’t like that type of film.",
+            explain:"Mark says he doesn’t really like documentaries (An Old Pier is a documentary).",
+            vi:"Vì sao Mark không muốn xem An Old Pier? → Vì Mark không thích phim tài liệu."
+          },
+          {
+            id:"GS-2-3",
+            prompt:"The word “reviews” in the conversation mostly means ____.",
+            options:["people’s opinions about a film","interesting scenes in a film","what people don’t like about a film"],
+            answer:"people’s opinions about a film",
+            explain:"Reviews = nhận xét/đánh giá của mọi người về phim.",
+            vi:"“reviews” nghĩa là: đánh giá/nhận xét của mọi người về phim."
+          },
+          {
+            id:"GS-2-4",
+            prompt:"What do people think of Our Holiday?",
+            options:["Everyone likes it.","No one likes it.","Most people like it."],
+            answer:"Most people like it.",
+            explain:"“Most say it’s funny and interesting.”",
+            vi:"Mọi người nghĩ gì về Our Holiday? → Đa số thích (vì vui và thú vị)."
+          }
+        ]
+      },
+
+      // Exercise 3 (MCQ)
+      {
+        type:"mcqGroup",
+        title:"3. Choose the correct word or phrase to complete each sentence",
+        graded:true,
+        questions:[
+          { id:"GS-3-1", prompt:"A film that tries to make the audience laugh is a (comedy / documentary).",
+            options:["comedy","documentary"], answer:"comedy",
+            explain:"Comedy = phim hài (làm người xem cười).",
+            vi:"Phim làm khán giả cười là phim hài (comedy)."
+          },
+          { id:"GS-3-2", prompt:"A film that is based only on imagination, not on real facts, is a (comedy / fantasy).",
+            options:["comedy","fantasy"], answer:"fantasy",
+            explain:"Fantasy = phim giả tưởng (dựa vào tưởng tượng).",
+            vi:"Phim dựa vào tưởng tượng là phim giả tưởng (fantasy)."
+          },
+          { id:"GS-3-3", prompt:"A film that shows real life events or stories is a (documentary / horror film).",
+            options:["documentary","horror film"], answer:"documentary",
+            explain:"Documentary = phim tài liệu (sự kiện/câu chuyện có thật).",
+            vi:"Phim về sự kiện có thật là phim tài liệu (documentary)."
+          },
+          { id:"GS-3-4", prompt:"A film that is set in the future, often about science, is a (cartoon / science fiction film).",
+            options:["cartoon","science fiction film"], answer:"science fiction film",
+            explain:"Science fiction film = phim khoa học viễn tưởng (tương lai/khoa học).",
+            vi:"Phim bối cảnh tương lai, về khoa học: science fiction film."
+          },
+          { id:"GS-3-5", prompt:"A film in which strange and frightening things happen is a (horror film / comedy).",
+            options:["horror film","comedy"], answer:"horror film",
+            explain:"Horror film = phim kinh dị (đáng sợ).",
+            vi:"Phim có các sự việc kỳ lạ, đáng sợ: phim kinh dị (horror film)."
+          }
+        ]
+      },
+
+      // Exercise 4 (Fill)
+      {
+        type:"fillGroup",
+        title:"4. Complete the following sentences with the words in the box",
+        graded:true,
+        wordBank:["funny","frightening","boring","moving","interesting"],
+        questions:[
+          { id:"GS-4-1", prompt:"Going to the hospital can be ____ for a child.", answers:["frightening"],
+            explain:"Frightening = đáng sợ.",
+            vi:"Đi bệnh viện có thể đáng sợ với trẻ nhỏ."
+          },
+          { id:"GS-4-2", prompt:"The film was so ____ that the audience couldn’t stop laughing.", answers:["funny"],
+            explain:"Funny = hài hước.",
+            vi:"Bộ phim hài đến mức khán giả cười không ngừng."
+          },
+          { id:"GS-4-3", prompt:"Many people cried when they saw the ____ scenes of the film.", answers:["moving"],
+            explain:"Moving = cảm động (khiến người xem rơi nước mắt).",
+            vi:"Nhiều người khóc khi xem những cảnh cảm động."
+          },
+          { id:"GS-4-4", prompt:"The film last night was so ____ that we fell asleep.", answers:["boring"],
+            explain:"Boring = chán.",
+            vi:"Phim tối qua chán đến mức chúng tôi ngủ gật."
+          },
+          { id:"GS-4-5", prompt:"This book is ____. I got a lot of useful information from it.", answers:["interesting"],
+            explain:"Interesting = thú vị.",
+            vi:"Cuốn sách thú vị vì cung cấp nhiều thông tin hữu ích."
+          }
+        ]
+      },
+
+      {
+        type:"practice",
+        title:"5. Work in pairs. Ask and answer about a type of film. Use some adjectives in 4.",
+        note:`Không chấm điểm. Gợi ý mẫu:
+A: Do you like documentaries?
+B: No, I don’t.
+A: Why not?
+B: I think they’re boring.`,
+        vi:`Dịch Việt:
+A: Bạn có thích phim tài liệu không?
+B: Không.
+A: Vì sao?
+B: Mình thấy chúng chán.`
+      }
+    ]
+  },
+
+  {
+    id:"ACL1",
+    title:"A CLOSER LOOK 1 • Vocabulary & Pronunciation",
+    subtitle:"Tính từ miêu tả phim + luyện âm /ɪə/ và /eə/",
+    blocks:[
+      {
+        type:"matchSelect",
+        title:"1. Match the following adjectives with their meanings",
+        graded:true,
+        leftLabel:"Adjectives",
+        rightLabel:"Meanings (a–e)",
+        pairs:[
+          {id:"ACL1-1-1", left:"1. dull", right:"b. not interesting or exciting"},
+          {id:"ACL1-1-2", left:"2. violent", right:"d. containing lots of fighting and killing"},
+          {id:"ACL1-1-3", left:"3. confusing", right:"a. difficult to understand, not clear"},
+          {id:"ACL1-1-4", left:"4. shocking", right:"e. very surprising and difficult to believe"},
+          {id:"ACL1-1-5", left:"5. enjoyable", right:"c. giving pleasure"},
+        ],
+        explain:"Gợi nhớ nhanh: dull=chán; violent=bạo lực; confusing=khó hiểu; shocking=gây sốc; enjoyable=thú vị/đáng thưởng thức.",
+        vi:"Dịch Việt: nối tính từ với nghĩa tương ứng."
+      },
+
+      {
+        type:"fillGroup",
+        title:"2. Complete the following sentences, using the adjectives in 1",
+        graded:true,
+        wordBank:["dull","violent","confusing","shocking","enjoyable"],
+        questions:[
+          { id:"ACL1-2-1",
+            prompt:"I found the film A Polluted Planet hard to believe. It’s a very ____ documentary.",
+            answers:["shocking"],
+            explain:"Hard to believe → shocking (gây sốc/khó tin).",
+            vi:"Phim khó tin → shocking."
+          },
+          { id:"ACL1-2-2",
+            prompt:"The film was so ____ that we almost fell asleep.",
+            answers:["dull"],
+            explain:"Almost fell asleep → dull (chán).",
+            vi:"Buồn ngủ → dull."
+          },
+          { id:"ACL1-2-3",
+            prompt:"I think you will enjoy Our Holiday. It’s quite ____.",
+            answers:["enjoyable"],
+            explain:"Enjoy → enjoyable (đáng thưởng thức).",
+            vi:"Enjoy → enjoyable."
+          },
+          { id:"ACL1-2-4",
+            prompt:"There were too many fights in the film. It was too ____.",
+            answers:["violent"],
+            explain:"Too many fights → violent (bạo lực).",
+            vi:"Nhiều đánh nhau → violent."
+          },
+          { id:"ACL1-2-5",
+            prompt:"I didn’t really understand the film. It was very ____.",
+            answers:["confusing"],
+            explain:"Didn’t understand → confusing (khó hiểu).",
+            vi:"Không hiểu → confusing."
+          }
+        ]
+      },
+
+      {
+        type:"practice",
+        title:"3. Work in pairs. Ask and answer questions about a film you saw recently.",
+        note:`Không chấm điểm. Ví dụ:
+A: What film did you see recently?
+B: Skyfall.
+A: What do you think of it?
+B: It’s too violent.`,
+        vi:"Dịch Việt: hỏi–đáp về một bộ phim bạn xem gần đây."
+      },
+
+      {
+        type:"practice",
+        title:"4. Pronunciation /ɪə/ and /eə/ (Listen and repeat the words)",
+        note:`Bấm “Nghe TTS” để nghe đọc. Cột /ɪə/: idea, pier, really, fear, ear. Cột /eə/: nightmare, their, share, hair, chair.`,
+        ttsButtons:[
+          {label:"Nghe /ɪə/ words", text:"idea, pier, really, fear, ear"},
+          {label:"Nghe /eə/ words", text:"nightmare, their, share, hair, chair"}
+        ],
+        vi:"Gợi ý: /ɪə/ như 'i-ờ'; /eə/ như 'e-ờ' (chỉ để nhớ nhanh)."
+      },
+
+      {
+        type:"practice",
+        title:"5. Pronunciation practice sentences (Listen and repeat)",
+        note:`Bấm “Nghe TTS” từng câu:
+1) Is there a cinema near here?
+2) There’s a chair under the stairs.
+3) Put your earphones near here.
+4) I don’t care about your idea.
+5) Our aeroplane is up there, in the air.`,
+        ttsButtons:[
+          {label:"1", text:"Is there a cinema near here?"},
+          {label:"2", text:"There's a chair under the stairs."},
+          {label:"3", text:"Put your earphones near here."},
+          {label:"4", text:"I don't care about your idea."},
+          {label:"5", text:"Our aeroplane is up there, in the air."}
+        ],
+        vi:"Dịch Việt (ý nghĩa chung): luyện đọc các câu có âm /ɪə/ và /eə/."
+      }
+    ]
+  },
+
+  {
+    id:"ACL2",
+    title:"A CLOSER LOOK 2 • Grammar (Although / though / however)",
+    subtitle:"Liên từ nối ý tương phản",
+    blocks:[
+      {
+        type:"practice",
+        title:"1. Combine the two sentences, using although / though",
+        note:`Không tự chấm (nhiều cách đúng). Đáp án mẫu:
+1) Although/Though the questions were very difficult, he solved them easily.
+2) Although/Though he was a great actor, he never played a leading role in a film.
+3) Although/Though they spent a lot of money on the film, it wasn’t a big success.
+4) Although/Though the film was a comedy, I didn’t find it funny at all.
+5) Although/Though we played well, we couldn’t win the match.`,
+        vi:"Dịch Việt: Dùng although/though để nối hai câu mang ý tương phản."
+      },
+
+      {
+        type:"fillGroup",
+        title:"2. Complete the sentences, using although / though or however",
+        graded:true,
+        wordBank:["although","though","however"],
+        questions:[
+          { id:"ACL2-2-1",
+            prompt:"____ the acting in the film was good, I didn’t like its story.",
+            answers:["although","though"],
+            explain:"Although/Though + mệnh đề → tương phản.",
+            vi:"Mặc dù diễn xuất hay, nhưng mình không thích nội dung."
+          },
+          { id:"ACL2-2-2",
+            prompt:"I felt really tired. ____, I went to see the film.",
+            answers:["however"],
+            explain:"However đứng đầu câu 2, thường có dấu phẩy: However, ...",
+            vi:"Mình rất mệt. Tuy nhiên, mình vẫn đi xem phim."
+          },
+          { id:"ACL2-2-3",
+            prompt:"I really enjoyed the new film ____ most of my friends didn’t like it.",
+            answers:["although","though"],
+            explain:"Although/Though nối tương phản trong cùng câu.",
+            vi:"Mình rất thích phim mới dù đa số bạn mình không thích."
+          },
+          { id:"ACL2-2-4",
+            prompt:"He studied hard for the exam. ____, he failed it.",
+            answers:["however"],
+            explain:"However = tuy nhiên (tương phản kết quả).",
+            vi:"Cậu ấy học chăm. Tuy nhiên vẫn trượt."
+          },
+          { id:"ACL2-2-5",
+            prompt:"Mai speaks English very well ____ her native language is Vietnamese.",
+            answers:["although","though"],
+            explain:"Although/Though + mệnh đề.",
+            vi:"Mai nói tiếng Anh rất tốt dù tiếng mẹ đẻ là tiếng Việt."
+          }
+        ]
+      },
+
+      {
+        type:"practice",
+        title:"3. Use your own ideas to complete the sentences. Then compare your sentences with a partner’s.",
+        note:`Không chấm điểm (mở). Gợi ý mẫu:
+1) I don’t really like the film though it has good reviews.
+2) He felt very well. However, he didn’t go out.
+3) The film was a great success. However, some people disliked it.
+4) Although it rained all day, we still went to the cinema.
+5) The music in the film was terrible. However, the story was great.`,
+        vi:"Dịch Việt: tự hoàn thành câu theo ý mình."
+      }
+    ]
+  },
+
+  {
+    id:"COMM",
+    title:"COMMUNICATION • Everyday English",
+    subtitle:"Accepting and declining suggestions",
+    blocks:[
+      {
+        type:"mcqGroup",
+        title:"4. Choose the correct answer A, B, or C to complete each sentence",
+        graded:true,
+        questions:[
+          { id:"COMM-4-1",
+            prompt:"Mary overslept this morning ____ she went to bed early last night.",
+            options:["although","because","so"],
+            answer:"although",
+            explain:"Tương phản: ngủ quên dù tối qua ngủ sớm.",
+            vi:"Mary sáng nay ngủ quên mặc dù tối qua đi ngủ sớm."
+          },
+          { id:"COMM-4-2",
+            prompt:"____ the sun is shining, it isn’t very warm.",
+            options:["Because","However","Though"],
+            answer:"Though",
+            explain:"Though + mệnh đề: Dù trời nắng nhưng không ấm.",
+            vi:"Dù trời nắng nhưng không ấm lắm."
+          },
+          { id:"COMM-4-3",
+            prompt:"I don’t like running ____ I like swimming.",
+            options:["But","So","However"],
+            answer:"But",
+            explain:"But nối 2 ý đối lập trong 1 câu.",
+            vi:"Mình không thích chạy bộ nhưng thích bơi."
+          },
+          { id:"COMM-4-4",
+            prompt:"____ the film was exciting, Jim fell asleep in the cinema.",
+            options:["However","Because","Although"],
+            answer:"Although",
+            explain:"Mặc dù phim hấp dẫn nhưng Jim vẫn ngủ gật.",
+            vi:"Mặc dù phim hay nhưng Jim vẫn ngủ gật."
+          },
+          { id:"COMM-4-5",
+            prompt:"The story of the film is silly. ____, many people still enjoyed it.",
+            options:["However","Though","But"],
+            answer:"However",
+            explain:"However, + dấu phẩy, mở câu mới.",
+            vi:"Cốt truyện ngớ ngẩn. Tuy nhiên nhiều người vẫn thích."
+          }
+        ]
+      },
+
+      {
+        type:"dialogue",
+        title:"Everyday English: Accepting and declining suggestions",
+        audioHint:"Bấm “Nghe TTS” để nghe (mô phỏng phần listening).",
+        ttsText:`Tom: How about going to the cinema tonight?
+Anna: That's a great idea.
+Minh: Let's go to see A Nightmare at Sao Mai Cinema tonight.
+Mi: I'd love to, but that's too far for me to travel.`,
+        lines:[
+          ["Tom","How about going to the cinema tonight?"],
+          ["Anna","That’s a great idea."],
+          ["Minh","Let’s go to see A Nightmare at Sao Mai Cinema tonight."],
+          ["Mi","I’d love to, but that’s too far for me to travel."]
+        ],
+        viTranslation:
+`Dịch Việt:
+- Tom: Tối nay đi rạp chiếu phim nhé?
+- Anna: Ý hay đó!
+- Minh: Tối nay đi xem “A Nightmare” ở rạp Sao Mai nhé.
+- Mi: Mình muốn đi lắm, nhưng đi xa quá với mình.`
+      },
+
+      {
+        type:"practice",
+        title:"2. Work in pairs. Make similar conversations (3 situations)",
+        note:`Không chấm điểm. Tình huống:
+- Student A suggests going to the cinema and student B accepts.
+- Student A suggests going for a picnic but student B declines.
+- Student A suggests playing badminton after school and student B accepts.`,
+        vi:"Dịch Việt: làm hội thoại tương tự theo 3 tình huống."
+      },
+
+      {
+        type:"practice",
+        title:"5. GAME: Chain story (Although it rained yesterday, ...)",
+        note:`Không chấm điểm. Ví dụ:
+A: Although it rained yesterday, we went shopping.
+B: Although/Though we went shopping, we didn’t buy anything.
+C: ...`,
+        vi:"Dịch Việt: nối câu chuyện dùng although/though."
+      }
+    ]
+  },
+
+  {
+    id:"SKILLS",
+    title:"SKILLS 1 • Listening & Reading & Speaking",
+    subtitle:"A survey about films + Film review (Harry Potter...)",
+    blocks:[
+      {
+        type:"fillGroup",
+        title:"Listening (3). Listen to the conversation and fill in the blanks",
+        graded:true,
+        wordBank:["most","comedies","favourite","stars","funny"],
+        audioTTS:
+`Tom: Hi Lan. I'm doing a survey about films. Can I ask you some questions?
+Lan: Sure. Go ahead.
+Tom: What kind of films do you like most?
+Lan: I love comedies.
+Tom: What's the name of your favourite comedy?
+Lan: It's Dr Johnny.
+Tom: Who stars in it?
+Lan: Bill Harris.
+Tom: What do you think of it?
+Lan: It's very funny.
+Tom: Thank you.`,
+        questions:[
+          { id:"SK-3-1", prompt:"What kind of films do you like (1) ____?", answers:["most"],
+            explain:"Cụm tự nhiên: like most = thích nhất.",
+            vi:"Bạn thích nhất loại phim nào?"
+          },
+          { id:"SK-3-2", prompt:"I love (2) ____.", answers:["comedies"],
+            explain:"Comedy (phim hài) số nhiều: comedies.",
+            vi:"Mình thích phim hài."
+          },
+          { id:"SK-3-3", prompt:"What’s the name of your (3) ____ comedy?", answers:["favourite","favorite"],
+            explain:"Favourite = yêu thích nhất.",
+            vi:"Tên bộ phim hài yêu thích của bạn là gì?"
+          },
+          { id:"SK-3-4", prompt:"Who (4) ____ in it?", answers:["stars"],
+            explain:"Star (v) = đóng vai chính.",
+            vi:"Ai đóng vai chính?"
+          },
+          { id:"SK-3-5", prompt:"It’s very (5) ____.", answers:["funny"],
+            explain:"Funny = hài hước.",
+            vi:"Nó rất hài."
+          }
+        ]
+      },
+
+      {
+        type:"practice",
+        title:"Work in groups (4) & Report (5)",
+        note:`Không chấm điểm (hoạt động nhóm):
+- Làm khảo sát về phim yêu thích của các thành viên.
+- Báo cáo kết quả cho lớp.
+(Bảng mẫu trong SGK: Member’s name, Name of the film, Type of film, Main actor(s)/actress(es), Reviews.)`,
+        vi:"Dịch Việt: làm khảo sát nhóm và báo cáo."
+      },
+
+      {
+        type:"matchSelect",
+        title:"Reading (2). Match the words with their meanings (from Mark’s blog)",
+        graded:true,
+        leftLabel:"Words",
+        rightLabel:"Meanings (a–d)",
+        pairs:[
+          {id:"SK-R-1", left:"1. series", right:"b. related films that tell stories about the same characters"},
+          {id:"SK-R-2", left:"2. wizard", right:"d. a man who has magical powers"},
+          {id:"SK-R-3", left:"3. must-see", right:"a. something that is so good that you think others should see it"},
+          {id:"SK-R-4", left:"4. gripping", right:"c. very exciting or interesting"},
+        ],
+        explain:"Key: series=chuỗi phim; wizard=phù thủy; must-see=đáng xem; gripping=cuốn hút.",
+        vi:"Dịch Việt: nối từ với nghĩa."
+      },
+
+      {
+        type:"mcqGroup",
+        title:"Reading (3). Read Mark’s blog again and answer the questions",
+        graded:true,
+        questions:[
+          {
+            id:"SK-RQ-1",
+            prompt:"What kind of film is Harry Potter and the Sorcerer’s Stone?",
+            options:["A fantasy.","A documentary.","A comedy."],
+            answer:"A fantasy.",
+            explain:"In the blog: “Harry Potter and the Sorcerer’s Stone is a fantasy.”",
+            vi:"Đó là phim giả tưởng."
+          },
+          {
+            id:"SK-RQ-2",
+            prompt:"Who is Daniel Radcliffe?",
+            options:["He is the director.","He is one of the stars in the film.","He is a wizard in real life."],
+            answer:"He is one of the stars in the film.",
+            explain:"Blog: “Daniel Radcliffe is one of the stars in the film.”",
+            vi:"Daniel Radcliffe là một trong các diễn viên chính."
+          },
+          {
+            id:"SK-RQ-3",
+            prompt:"What is the film about?",
+            options:[
+              "It tells the story of Harry Potter, a powerful wizard, and his life at a school for wizards.",
+              "It is about two women exchanging houses.",
+              "It is about a very big boy who saves his town."
+            ],
+            answer:"It tells the story of Harry Potter, a powerful wizard, and his life at a school for wizards.",
+            explain:"Đúng theo nội dung bài review.",
+            vi:"Phim kể về Harry Potter – một phù thủy – học ở trường phù thủy và khám phá về bản thân."
+          },
+          {
+            id:"SK-RQ-4",
+            prompt:"What do people say about the film?",
+            options:[
+              "It is boring and dull.",
+              "It is a must-see for teens; the story is gripping and the acting is excellent.",
+              "Only a few people like it because it is silly."
+            ],
+            answer:"It is a must-see for teens; the story is gripping and the acting is excellent.",
+            explain:"Blog: must-see; gripping; acting excellent; music amazing.",
+            vi:"Mọi người nói đây là phim đáng xem; câu chuyện cuốn hút; diễn xuất xuất sắc."
+          }
+        ]
+      },
+
+      {
+        type:"practice",
+        title:"Speaking (4–5). Talk about the film Kungfu Boy (table)",
+        note:`Không chấm điểm. Thông tin:
+- Film’s name: Kungfu Boy
+- Director: John Stevenson
+- Type of film: Comedy
+- Main actor/actress: Bruce Wane
+- Main content: About a very big boy who saves his town and becomes a hero
+- Reviews: Funny and interesting
+- Time: 4.30 p.m. and 8.30 p.m. daily
+- Place: Ngoc Khanh Cinema`,
+        vi:"Dịch Việt: hỏi–đáp và thuyết trình về phim Kungfu Boy theo bảng."
+      }
+    ]
+  },
+
+  {
+    id:"LISTEN",
+    title:"LISTENING • Naughty Twins",
+    subtitle:"Có phần nghe + trắc nghiệm (mô phỏng TTS để chạy offline)",
+    blocks:[
+      {
+        type:"dialogue",
+        title:"2. Mark and Hoa are talking about the film Naughty Twins. Listen. Who stars in the film?",
+        audioHint:"SGK là phần nghe. Ở bản offline này, nội dung nghe được mô phỏng bằng TTS (để bạn vẫn có “phần nghe”).",
+        ttsText:
+`Mark: Have you heard about the film Naughty Twins?
+Hoa: Yes. I watched it last week.
+Mark: Who stars in the film?
+Hoa: Two young actresses play the twin sisters. They are really good.
+Mark: Is it a comedy?
+Hoa: Yes, it is. People say young people should see it.
+Mark: Where do the twins meet each other for the first time?
+Hoa: At a summer camp. It's funny and a bit shocking in some scenes.`,
+        lines:[
+          ["Mark","Have you heard about the film Naughty Twins?"],
+          ["Hoa","Yes. I watched it last week."],
+          ["Mark","Who stars in the film?"],
+          ["Hoa","Two young actresses play the twin sisters. They are really good."],
+          ["Mark","Is it a comedy?"],
+          ["Hoa","Yes, it is. People say young people should see it."],
+          ["Mark","Where do the twins meet each other for the first time?"],
+          ["Hoa","At a summer camp. It’s funny and a bit shocking in some scenes."]
+        ],
+        viTranslation:
+`Dịch Việt (mô phỏng):
+- Mark: Bạn nghe về phim Naughty Twins chưa?
+- Hoa: Rồi. Mình xem tuần trước.
+- Mark: Ai đóng vai chính?
+- Hoa: Hai nữ diễn viên trẻ đóng vai chị em sinh đôi. Họ diễn rất tốt.
+- Mark: Đó là phim hài à?
+- Hoa: Ừ. Nhiều người nói giới trẻ nên xem.
+- Mark: Hai chị em gặp nhau lần đầu ở đâu?
+- Hoa: Ở trại hè. Phim vui và có vài cảnh hơi “gây sốc”.`
+      },
+
+      {
+        type:"mcqGroup",
+        title:"3. Listen again. Choose the best answer",
+        graded:true,
+        questions:[
+          {
+            id:"LIS-3-1",
+            prompt:"Naughty Twins is a ____.",
+            options:["comedy","science fiction film","horror film"],
+            answer:"comedy",
+            explain:"Trong phần nghe mô phỏng: “Yes, it is (a comedy).”",
+            vi:"Naughty Twins là phim hài."
+          },
+          {
+            id:"LIS-3-2",
+            prompt:"The main characters are ____.",
+            options:["old classmates","twin brothers","twin sisters"],
+            answer:"twin sisters",
+            explain:"Phần nghe mô phỏng: “the twin sisters”.",
+            vi:"Nhân vật chính là cặp chị em sinh đôi."
+          },
+          {
+            id:"LIS-3-3",
+            prompt:"Where do the twins meet each other for the first time?",
+            options:["At a summer camp.","At a summer school.","At a hospital."],
+            answer:"At a summer camp.",
+            explain:"Phần nghe mô phỏng: “At a summer camp.”",
+            vi:"Hai chị em gặp nhau lần đầu ở trại hè."
+          },
+          {
+            id:"LIS-3-4",
+            prompt:"People say Naughty Twins is a film that ____.",
+            options:["young people should see","young people shouldn’t see","is shocking"],
+            answer:"young people should see",
+            explain:"Phần nghe mô phỏng: “young people should see it.”",
+            vi:"Mọi người nói giới trẻ nên xem phim này."
+          }
+        ]
+      },
+
+      {
+        type:"practice",
+        title:"1. Work in pairs. Discuss: What do you like / dislike about a comedy?",
+        note:"Không chấm điểm. Gợi ý: I like funny stories / I dislike silly jokes / ...",
+        vi:"Dịch Việt: thảo luận bạn thích/không thích gì ở phim hài."
+      }
+    ]
+  },
+
+  {
+    id:"LB",
+    title:"LOOKING BACK • Vocabulary & Grammar",
+    subtitle:"Ôn tập Unit 8",
+    blocks:[
+      {
+        type:"matchSelect",
+        title:"Vocabulary (1). Match the types of film in column A with their descriptions in column B",
+        graded:true,
+        leftLabel:"Types of film",
+        rightLabel:"Descriptions (a–e)",
+        pairs:[
+          {id:"LB-1-1", left:"1. science fiction film", right:"d. This type of film is about life in the future, robots, and space travel."},
+          {id:"LB-1-2", left:"2. comedy", right:"a. This type of film makes you laugh."},
+          {id:"LB-1-3", left:"3. horror film", right:"e. This is a frightening type of film."},
+          {id:"LB-1-4", left:"4. documentary", right:"c. This type of film gives us useful information about animals, science or technology."},
+          {id:"LB-1-5", left:"5. fantasy", right:"b. This type of film has supernatural events."},
+        ],
+        explain:"Nhớ nhanh: comedy=cười; horror=sợ; sci-fi=tương lai; documentary=thông tin thật; fantasy=siêu nhiên.",
+        vi:"Dịch Việt: nối thể loại phim với mô tả."
+      },
+
+      {
+        type:"practice",
+        title:"Vocabulary (2). Give an example for every film type in the box",
+        note:`Không chấm điểm. Ví dụ gợi ý:
+- comedy: Mr Bean (SGK cho sẵn)
+- fantasy: Harry Potter
+- science fiction film: Star Wars (hoặc phim khoa học viễn tưởng bạn biết)
+- documentary: A Polluted Planet
+- horror film: A Nightmare`,
+        vi:"Dịch Việt: nêu ví dụ cho mỗi thể loại phim."
+      },
+
+      {
+        type:"mcqGroup",
+        title:"Vocabulary (3). Choose the correct answer A, B, or C to complete each sentence",
+        graded:true,
+        questions:[
+          {
+            id:"LB-3-1",
+            prompt:"The film was long and ____. Many people went home before it ended.",
+            options:["funny","shocking","dull"],
+            answer:"dull",
+            explain:"Dull = chán, nên người xem bỏ về.",
+            vi:"Phim dài và chán → dull."
+          },
+          {
+            id:"LB-3-2",
+            prompt:"The film is too ____ with a lot of fighting and killing scenes.",
+            options:["funny","violent","interesting"],
+            answer:"violent",
+            explain:"Nhiều đánh nhau/giết chóc → violent.",
+            vi:"Nhiều cảnh bạo lực → violent."
+          },
+          {
+            id:"LB-3-3",
+            prompt:"A ____ story often makes us feel afraid.",
+            options:["moving","frightening","interesting"],
+            answer:"frightening",
+            explain:"Frightening = đáng sợ → làm ta sợ.",
+            vi:"Câu chuyện đáng sợ → frightening."
+          },
+          {
+            id:"LB-3-4",
+            prompt:"The news was ____. I couldn’t believe it.",
+            options:["shocking","funny","confusing"],
+            answer:"shocking",
+            explain:"Shocking = gây sốc/khó tin.",
+            vi:"Tin tức gây sốc → shocking."
+          },
+          {
+            id:"LB-3-5",
+            prompt:"____ films often make us cry.",
+            options:["Amusing","Funny","Moving"],
+            answer:"Moving",
+            explain:"Moving = cảm động → dễ khóc.",
+            vi:"Phim cảm động thường làm ta khóc."
+          },
+          {
+            id:"LB-3-6",
+            prompt:"The road signs were ____ and we soon got lost.",
+            options:["confusing","shocking","interesting"],
+            answer:"confusing",
+            explain:"Confusing = gây rối/khó hiểu → dễ lạc.",
+            vi:"Biển báo khó hiểu → confusing."
+          }
+        ]
+      },
+
+      {
+        type:"matchSelect",
+        title:"Grammar (4). Match the sentences or sentence halves in columns A and B",
+        graded:true,
+        leftLabel:"Column A",
+        rightLabel:"Column B (a–e)",
+        pairs:[
+          {id:"LB-4-1", left:"1. Although he arrived late,", right:"d. he left the cinema early."},
+          {id:"LB-4-2", left:"2. The film received good reviews.", right:"e. However, only a few people saw it."},
+          {id:"LB-4-3", left:"3. Though popcorn and other snacks in the cinema are very expensive,", right:"a. people still buy them."},
+          {id:"LB-4-4", left:"4. Cinema tickets are expensive.", right:"b. However, the number of people going to cinemas is increasing."},
+          {id:"LB-4-5", left:"5. Although I don’t really like to go to the cinema,", right:"c. I don’t want to stay home tonight."},
+        ],
+        explain:"Mấu chốt: Although/Though + mệnh đề; However mở câu tương phản.",
+        vi:"Dịch Việt: nối nửa câu để tạo câu hoàn chỉnh."
+      }
+    ]
+  },
+
+  {
+    id:"FINAL",
+    title:"TỔNG KẾT • Nộp bài & Xuất kết quả",
+    subtitle:"Điểm – % đúng – thời gian – chi tiết theo từng phần",
+    blocks:[
+      {
+        type:"summary"
+      }
+    ]
+  }
+];
+
+/* =========================
+   4) State
+========================= */
+const state = {
+  startedAt: now(),
+  seconds: 0,
+  teacher: false,
+  musicOn: false,
+  volume: 0.35,
+  // answers: qid -> {value, correct:boolean, submitted:boolean}
+  answers: {},
+  // match: qid -> mapping
+  currentSection: 0
+};
+
+let timer=null;
+
+function computeAllGradedQuestionIds(){
+  const ids=[];
+  for(const sec of DATA){
+    for(const b of sec.blocks){
+      if(b.type==="mcqGroup" && b.graded){
+        b.questions.forEach(q=>ids.push(q.id));
+      }
+      if(b.type==="fillGroup" && b.graded){
+        b.questions.forEach(q=>ids.push(q.id));
+      }
+      if(b.type==="matchSelect" && b.graded){
+        b.pairs.forEach(p=>ids.push(p.id));
+      }
+    }
+  }
+  return ids;
+}
+const ALL_GRADED_IDS = computeAllGradedQuestionIds();
+
+function scoreNow(){
+  let s=0;
+  for(const id of ALL_GRADED_IDS){
+    if(state.answers[id]?.correct) s+=1;
+  }
+  return s;
+}
+function answeredCount(){
+  let n=0;
+  for(const id of ALL_GRADED_IDS){
+    if(state.answers[id]?.submitted) n+=1;
+  }
+  return n;
+}
+function updateHUD(){
+  document.getElementById("scoreNow").textContent = scoreNow();
+  document.getElementById("scoreMax").textContent = ALL_GRADED_IDS.length;
+  document.getElementById("timeNow").textContent = mmss(state.seconds);
+  const done = answeredCount();
+  const pct = ALL_GRADED_IDS.length ? Math.round(done/ALL_GRADED_IDS.length*100) : 0;
+  document.getElementById("pct").textContent = pct + "%";
+  document.getElementById("bar").style.width = pct + "%";
+}
+
+function saveState(){
+  try{
+    const payload = {
+      ...state,
+      musicOn,
+      volume: getVolume(),
+      savedAt: now()
+    };
+    localStorage.setItem(LS_KEY, JSON.stringify(payload));
+  }catch(e){}
+}
+function loadState(){
+  try{
+    const raw = localStorage.getItem(LS_KEY);
+    if(!raw) return false;
+    const s = JSON.parse(raw);
+    Object.assign(state, s);
+    // restore timer baseline
+    if(!state.startedAt) state.startedAt = now();
+    // restore UI options
+    if(typeof s.volume==="number"){
+      volEl.value = Math.round(s.volume*100);
+    }
+    if(typeof s.musicOn==="boolean"){
+      musicOn = s.musicOn;
+    }
+    return true;
+  }catch(e){ return false; }
+}
+
+/* =========================
+   5) Rendering
+========================= */
+const navEl = document.getElementById("nav");
+const contentEl = document.getElementById("content");
+
+function sectionDone(sec){
+  // done if all graded ids within section submitted
+  const ids=[];
+  for(const b of sec.blocks){
+    if(b.type==="mcqGroup" && b.graded) b.questions.forEach(q=>ids.push(q.id));
+    if(b.type==="fillGroup" && b.graded) b.questions.forEach(q=>ids.push(q.id));
+    if(b.type==="matchSelect" && b.graded) b.pairs.forEach(p=>ids.push(p.id));
+  }
+  if(ids.length===0) return false;
+  return ids.every(id=>state.answers[id]?.submitted);
+}
+
+function renderNav(){
+  navEl.innerHTML="";
+  DATA.forEach((sec, idx)=>{
+    const div=document.createElement("div");
+    div.className="item"+(idx===state.currentSection?" active":"")+(sectionDone(sec)?" done":"");
+    div.onclick=()=>{ state.currentSection=idx; render(); saveState(); };
+    const dot=document.createElement("div"); dot.className="dot";
+    const box=document.createElement("div");
+    const t=document.createElement("div"); t.className="t"; t.textContent=sec.title;
+    const s=document.createElement("div"); s.className="s"; s.textContent=sec.subtitle;
+    box.appendChild(t); box.appendChild(s);
+    div.appendChild(dot); div.appendChild(box);
+    navEl.appendChild(div);
+  });
+}
+
+function render(){
+  renderNav();
+  updateHUD();
+
+  const sec = DATA[state.currentSection];
+  contentEl.innerHTML = "";
+
+  const title = document.createElement("div");
+  title.className="sectionTitle";
+  title.innerHTML = `
+    <div>
+      <h3>${sec.title}</h3>
+      <div class="meta">${sec.subtitle}</div>
+    </div>
+    <div class="meta">${state.teacher ? '<span class="tag ok">GV: ĐÃ MỞ KHÓA ĐÁP ÁN</span>' : '<span class="tag">GV: Chưa mở</span>'}</div>
+  `;
+  contentEl.appendChild(title);
+
+  for(const block of sec.blocks){
+    contentEl.appendChild(renderBlock(block, sec.id));
+  }
+}
+
+function renderBlock(block, secId){
+  const card = document.createElement("div");
+  card.className="card";
+  const h4 = document.createElement("h4");
+  h4.textContent = block.title || "";
+  card.appendChild(h4);
+
+  if(block.type==="dialogue"){
+    const hint = document.createElement("div");
+    hint.className="hint";
+    hint.textContent = block.audioHint || "";
+    card.appendChild(hint);
+
+    const dlg = document.createElement("div");
+    dlg.className="dialogue";
+    block.lines.forEach(([sp,tx])=>{
+      const p=document.createElement("div");
+      p.className="dlgLine";
+      p.innerHTML = `<span class="speaker">${escapeHTML(sp)}:</span> ${escapeHTML(tx)}`;
+      dlg.appendChild(p);
+    });
+    card.appendChild(dlg);
+
+    const act = document.createElement("div");
+    act.className="kq";
+    const btnSpeak = document.createElement("button");
+    btnSpeak.className="btn";
+    btnSpeak.textContent="Nghe TTS";
+    btnSpeak.onclick=()=> speak(block.ttsText || block.lines.map(x=>`${x[0]}: ${x[1]}`).join("\n"));
+    act.appendChild(btnSpeak);
+
+    const btnShow = document.createElement("button");
+    btnShow.className="btn";
+    btnShow.textContent="Xem dịch Việt";
+    act.appendChild(btnShow);
+
+    card.appendChild(act);
+
+    const exp = document.createElement("div");
+    exp.className="explain";
+    exp.style.display="none";
+    exp.innerHTML = `<div class="row">
+      <div><span class="tag">Dịch Việt</span></div>
+      <div style="white-space:pre-wrap;line-height:1.4">${escapeHTML(block.viTranslation||"")}</div>
+    </div>`;
+    card.appendChild(exp);
+
+    btnShow.onclick=()=>{ exp.style.display = exp.style.display==="none" ? "block" : "none"; };
+
+    return card;
+  }
+
+  if(block.type==="mcqGroup"){
+    if(block.graded){
+      const hint = document.createElement("div");
+      hint.className="hint";
+      hint.textContent = "Chấm điểm: mỗi câu 1 điểm. Bấm “Nộp” từng câu để xem đáp án – giải thích – dịch Việt.";
+      card.appendChild(hint);
+    }
+
+    block.questions.forEach((q,i)=>{
+      const qCard = document.createElement("div");
+      qCard.style.marginTop="12px";
+      qCard.style.paddingTop="12px";
+      qCard.style.borderTop = i===0 ? "none" : "1px dashed var(--line)";
+
+      const row=document.createElement("div");
+      row.className="qrow";
+
+      const num=document.createElement("div");
+      num.className="qnum";
+      num.textContent = `${i+1}`;
+      row.appendChild(num);
+
+      const pr=document.createElement("div");
+      pr.className="prompt";
+      pr.innerHTML = `<div style="font-weight:800">${escapeHTML(q.prompt)}</div>`;
+      row.appendChild(pr);
+
+      qCard.appendChild(row);
+
+      const opts=document.createElement("div");
+      opts.className="opts";
+      // shuffle options each render but keep stable if already answered:
+      const baseOpts = q.options.slice();
+      const key = `__optOrder_${q.id}`;
+      const existingOrder = state.answers[key]?.value;
+      let optOrder = existingOrder ? existingOrder : shuffle(baseOpts);
+      if(!existingOrder){
+        state.answers[key]={value:optOrder, submitted:false, correct:false}; // store order
+      }
+
+      const chosen = state.answers[q.id]?.value ?? "";
+      optOrder.forEach((op, idx)=>{
+        const id=`${q.id}_opt_${idx}`;
+        const lab=document.createElement("label");
+        lab.className="opt";
+        lab.innerHTML = `
+          <input type="radio" name="${q.id}" id="${id}" ${chosen===op ? "checked":""}/>
+          <div class="lbl"><strong>${String.fromCharCode(65+idx)}.</strong> ${escapeHTML(op)}</div>
+        `;
+        lab.querySelector("input").addEventListener("change", ()=>{
+          state.answers[q.id] = { ...(state.answers[q.id]||{}), value: op, submitted:false, correct:false };
+          saveState();
+        });
+        opts.appendChild(lab);
+      });
+      qCard.appendChild(opts);
+
+      const actions=document.createElement("div");
+      actions.className="kq";
+      const btn=document.createElement("button");
+      btn.className="btn primary";
+      btn.textContent="Nộp";
+      actions.appendChild(btn);
+
+      const btnAns=document.createElement("button");
+      btnAns.className="btn";
+      btnAns.textContent="Xem đáp án";
+      btnAns.style.display = state.teacher ? "inline-flex" : "none";
+      actions.appendChild(btnAns);
+
+      qCard.appendChild(actions);
+
+      const exp=document.createElement("div");
+      exp.className="explain";
+      qCard.appendChild(exp);
+
+      function showExplain(force){
+        const st=state.answers[q.id]||{};
+        const user=st.value ?? "";
+        const correct = (norm(user)===norm(q.answer));
+        const submitted = st.submitted;
+
+        const canShow = submitted || state.teacher || force;
+        if(!canShow){ exp.style.display="none"; return; }
+
+        const tag = correct ? `<span class="tag ok">ĐÚNG</span>` : `<span class="tag bad">SAI</span>`;
+        const ua = user ? escapeHTML(user) : "<em>(chưa chọn)</em>";
+        exp.style.display="block";
+        exp.innerHTML = `
+          <div class="row">
+            <div>${tag} <span class="tag">Đáp án đúng</span> <span class="mono">${escapeHTML(q.answer)}</span></div>
+            <div><span class="tag">Bạn chọn</span> ${ua}</div>
+            <div><span class="tag">Giải thích</span> ${escapeHTML(q.explain||"")}</div>
+            <div><span class="tag">Dịch Việt</span> ${escapeHTML(q.vi||"")}</div>
+          </div>
+        `;
+      }
+
+      btn.onclick=()=>{
+        const st=state.answers[q.id]||{};
+        const user=st.value ?? "";
+        const correct = (norm(user)===norm(q.answer));
+        state.answers[q.id] = { value:user, submitted:true, correct };
+        updateHUD();
+        showExplain(true);
+        saveState();
+        toast(correct ? "Đúng!" : "Chưa đúng. Xem giải thích nhé.");
+        renderNav();
+      };
+      btnAns.onclick=()=> showExplain(true);
+
+      // render existing explain if already submitted
+      if(state.answers[q.id]?.submitted) showExplain(true);
+
+      card.appendChild(qCard);
+    });
+
+    return card;
+  }
+
+  if(block.type==="fillGroup"){
+    const hint=document.createElement("div");
+    hint.className="hint";
+    hint.textContent = (block.graded ? "Chấm điểm: mỗi câu 1 điểm. Nhập đáp án (1 từ/cụm ngắn), bấm “Nộp” để xem giải thích & dịch." : "");
+    card.appendChild(hint);
+
+    if(block.audioTTS){
+      const ttsRow=document.createElement("div");
+      ttsRow.className="kq";
+      const btnSpeak=document.createElement("button");
+      btnSpeak.className="btn";
+      btnSpeak.textContent="Nghe TTS (phần nghe)";
+      btnSpeak.onclick=()=> speak(block.audioTTS, 0.95);
+      ttsRow.appendChild(btnSpeak);
+      card.appendChild(ttsRow);
+    }
+
+    if(block.wordBank && block.wordBank.length){
+      const wb=document.createElement("div");
+      wb.className="hint";
+      wb.innerHTML = `<span class="tag">Word box</span> ${block.wordBank.map(w=>`<span class="kbd">${escapeHTML(w)}</span>`).join(" ")}`;
+      card.appendChild(wb);
+    }
+
+    block.questions.forEach((q,i)=>{
+      const qWrap=document.createElement("div");
+      qWrap.style.marginTop="12px";
+      qWrap.style.paddingTop="12px";
+      qWrap.style.borderTop = i===0 ? "none" : "1px dashed var(--line)";
+
+      const row=document.createElement("div");
+      row.className="qrow";
+
+      const num=document.createElement("div");
+      num.className="qnum";
+      num.textContent = `${i+1}`;
+      row.appendChild(num);
+
+      const pr=document.createElement("div");
+      pr.className="prompt";
+      pr.innerHTML = `<div style="font-weight:800">${escapeHTML(q.prompt)}</div>`;
+      row.appendChild(pr);
+      qWrap.appendChild(row);
+
+      const fill=document.createElement("div");
+      fill.className="fill";
+      const inp=document.createElement("input");
+      inp.className="input";
+      inp.placeholder="Nhập đáp án...";
+      inp.value = state.answers[q.id]?.value ?? "";
+      inp.addEventListener("input", ()=>{
+        state.answers[q.id] = { ...(state.answers[q.id]||{}), value: inp.value, submitted:false, correct:false };
+        saveState();
+      });
+
+      const btn=document.createElement("button");
+      btn.className="btn primary";
+      btn.textContent="Nộp";
+
+      const btnAns=document.createElement("button");
+      btnAns.className="btn";
+      btnAns.textContent="Xem đáp án";
+      btnAns.style.display = state.teacher ? "inline-flex" : "none";
+
+      fill.appendChild(inp);
+      fill.appendChild(btn);
+      fill.appendChild(btnAns);
+      qWrap.appendChild(fill);
+
+      const exp=document.createElement("div");
+      exp.className="explain";
+      qWrap.appendChild(exp);
+
+      function check(user){
+        const u = norm(user);
+        return q.answers.some(a=> norm(a)===u );
+      }
+      function showExplain(force){
+        const st=state.answers[q.id]||{};
+        const canShow = st.submitted || state.teacher || force;
+        if(!canShow){ exp.style.display="none"; return; }
+        const user=st.value ?? "";
+        const correct = check(user);
+        const tag = correct ? `<span class="tag ok">ĐÚNG</span>` : `<span class="tag bad">SAI</span>`;
+        exp.style.display="block";
+        exp.innerHTML = `
+          <div class="row">
+            <div>${tag} <span class="tag">Đáp án đúng</span> <span class="mono">${escapeHTML(q.answers[0])}</span></div>
+            <div><span class="tag">Bạn nhập</span> <span class="mono">${escapeHTML(user||"(trống)")}</span></div>
+            <div><span class="tag">Giải thích</span> ${escapeHTML(q.explain||"")}</div>
+            <div><span class="tag">Dịch Việt</span> ${escapeHTML(q.vi||"")}</div>
+          </div>
+        `;
+      }
+
+      btn.onclick=()=>{
+        const user=inp.value;
+        const correct = check(user);
+        state.answers[q.id] = { value:user, submitted:true, correct };
+        updateHUD();
+        showExplain(true);
+        saveState();
+        toast(correct ? "Đúng!" : "Chưa đúng. Xem giải thích nhé.");
+        renderNav();
+      };
+      btnAns.onclick=()=> showExplain(true);
+
+      if(state.answers[q.id]?.submitted) showExplain(true);
+
+      card.appendChild(qWrap);
+    });
+
+    return card;
+  }
+
+  if(block.type==="matchSelect"){
+    const hint=document.createElement("div");
+    hint.className="hint";
+    hint.textContent = block.graded
+      ? "Chấm điểm: mỗi cặp đúng 1 điểm. Chọn đáp án ở cột phải, bấm “Nộp” từng dòng."
+      : "";
+    card.appendChild(hint);
+
+    const wrap=document.createElement("div");
+    wrap.className="matchWrap";
+
+    // Build option pool from rights, shuffle but keep stable per section block
+    const rights = block.pairs.map(p=>p.right);
+    const key = `__matchOpt_${secId}_${block.title}`;
+    const existing = state.answers[key]?.value;
+    const optPool = existing ? existing : shuffle(rights);
+    if(!existing) state.answers[key] = {value: optPool, submitted:false, correct:false};
+
+    const leftCol=document.createElement("div");
+    leftCol.className="matchCol";
+    leftCol.innerHTML = `<h5>${escapeHTML(block.leftLabel||"Column A")}</h5>`;
+
+    const rightCol=document.createElement("div");
+    rightCol.className="matchCol";
+    rightCol.innerHTML = `<h5>${escapeHTML(block.rightLabel||"Column B")}</h5><div class="subtle">Chọn trong danh sách ở mỗi dòng.</div>`;
+
+    // We render pairs as rows
+    const rows=document.createElement("div");
+    block.pairs.forEach((p, idx)=>{
+      const r=document.createElement("div");
+      r.className="pairRow";
+      const left=document.createElement("div");
+      left.className="left";
+      left.textContent = p.left;
+      const sel=document.createElement("select");
+      sel.className="select";
+      const empty=document.createElement("option");
+      empty.value=""; empty.textContent="— chọn —";
+      sel.appendChild(empty);
+      optPool.forEach(op=>{
+        const o=document.createElement("option");
+        o.value=op; o.textContent=op;
+        sel.appendChild(o);
+      });
+
+      const saved = state.answers[p.id]?.value ?? "";
+      sel.value = saved;
+
+      sel.addEventListener("change", ()=>{
+        state.answers[p.id] = { ...(state.answers[p.id]||{}), value: sel.value, submitted:false, correct:false };
+        saveState();
+      });
+
+      const btn=document.createElement("button");
+      btn.className="btn primary";
+      btn.textContent="Nộp";
+
+      const btnAns=document.createElement("button");
+      btnAns.className="btn";
+      btnAns.textContent="Đáp án";
+      btnAns.style.display = state.teacher ? "inline-flex" : "none";
+
+      const exp=document.createElement("div");
+      exp.className="explain";
+
+      function isCorrect(val){ return norm(val)===norm(p.right); }
+      function showExplain(force){
+        const st=state.answers[p.id]||{};
+        const canShow = st.submitted || state.teacher || force;
+        if(!canShow){ exp.style.display="none"; return; }
+        const user=st.value ?? "";
+        const correct=isCorrect(user);
+        exp.style.display="block";
+        exp.innerHTML = `
+          <div class="row">
+            <div>${correct?'<span class="tag ok">ĐÚNG</span>':'<span class="tag bad">SAI</span>'}
+              <span class="tag">Đúng</span> <span class="mono">${escapeHTML(p.right)}</span>
+            </div>
+            <div><span class="tag">Bạn chọn</span> <span class="mono">${escapeHTML(user||"(trống)")}</span></div>
+          </div>
+        `;
+      }
+
+      btn.onclick=()=>{
+        const user=sel.value;
+        const correct=isCorrect(user);
+        state.answers[p.id] = { value:user, submitted:true, correct };
+        updateHUD();
+        showExplain(true);
+        saveState();
+        toast(correct ? "Đúng!" : "Chưa đúng.");
+        renderNav();
+      };
+      btnAns.onclick=()=> showExplain(true);
+
+      r.appendChild(left);
+      r.appendChild(sel);
+      r.appendChild(btn);
+      r.appendChild(btnAns);
+      r.appendChild(exp);
+      rows.appendChild(r);
+
+      if(state.answers[p.id]?.submitted) showExplain(true);
+
+      // add left text list
+      const li=document.createElement("div");
+      li.className="subtle";
+      li.style.margin="8px 0";
+      li.textContent = p.left;
+      leftCol.appendChild(li);
+    });
+
+    rightCol.appendChild(rows);
+
+    wrap.appendChild(leftCol);
+    wrap.appendChild(rightCol);
+    card.appendChild(wrap);
+
+    if(block.explain || block.vi){
+      const exp=document.createElement("div");
+      exp.className="explain";
+      exp.style.display="block";
+      exp.innerHTML = `
+        <div class="row">
+          ${block.explain ? `<div><span class="tag">Giải thích</span> ${escapeHTML(block.explain)}</div>` : ""}
+          ${block.vi ? `<div><span class="tag">Dịch Việt</span> ${escapeHTML(block.vi)}</div>` : ""}
+        </div>
+      `;
+      card.appendChild(exp);
+    }
+
+    return card;
+  }
+
+  if(block.type==="practice"){
+    const p=document.createElement("div");
+    p.className="subtle";
+    p.style.whiteSpace="pre-wrap";
+    p.textContent = block.note || "";
+    card.appendChild(p);
+
+    if(block.ttsButtons && block.ttsButtons.length){
+      const row=document.createElement("div");
+      row.className="kq";
+      block.ttsButtons.forEach(b=>{
+        const btn=document.createElement("button");
+        btn.className="btn";
+        btn.textContent = b.label;
+        btn.onclick=()=> speak(b.text, 0.95);
+        row.appendChild(btn);
+      });
+      card.appendChild(row);
+    }
+
+    if(block.vi){
+      const v=document.createElement("div");
+      v.className="explain";
+      v.style.display="block";
+      v.innerHTML = `<div class="row"><div><span class="tag">Dịch Việt</span> ${escapeHTML(block.vi)}</div></div>`;
+      card.appendChild(v);
+    }
+    return card;
+  }
+
+  if(block.type==="summary"){
+    // dynamic summary
+    const sNow = scoreNow();
+    const sMax = ALL_GRADED_IDS.length;
+    const done = answeredCount();
+    const pct = sMax ? Math.round(sNow/sMax*100) : 0;
+
+    const box=document.createElement("div");
+    box.className="twoCol";
+
+    const left=document.createElement("div");
+    left.innerHTML = `
+      <div class="dialogue">
+        <div style="font-weight:900;font-size:15px;margin-bottom:6px">Kết quả</div>
+        <div class="subtle">Tổng điểm: <span class="kbd">${sNow}/${sMax}</span> • Tỉ lệ đúng: <span class="kbd">${pct}%</span></div>
+        <div class="subtle">Đã nộp: <span class="kbd">${done}/${sMax}</span> • Thời gian: <span class="kbd">${mmss(state.seconds)}</span></div>
+        <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn primary" id="btnSubmitAll">Nộp bài (chốt điểm)</button>
+          <button class="btn" id="btnShowAll">Xem đáp án toàn bộ (GV)</button>
+          <button class="btn" id="btnExport">Xuất báo cáo</button>
+        </div>
+        <div class="subtle" style="margin-top:10px">
+          Lưu ý: mục “practice” (làm nhóm/viết) không tính điểm tự động.
+        </div>
+      </div>
+    `;
+
+    const right=document.createElement("div");
+    right.innerHTML = `
+      <div class="dialogue">
+        <div style="font-weight:900;font-size:15px;margin-bottom:6px">Chi tiết theo phần (câu chấm điểm)</div>
+        <div id="detailBox" class="subtle" style="white-space:pre-wrap"></div>
+      </div>
+    `;
+
+    box.appendChild(left);
+    box.appendChild(right);
+    card.appendChild(box);
+
+    setTimeout(()=>{
+      const detail = buildDetailText();
+      const el=document.getElementById("detailBox");
+      if(el) el.textContent = detail;
+
+      const btnSubmitAll=document.getElementById("btnSubmitAll");
+      if(btnSubmitAll){
+        btnSubmitAll.onclick=()=>{
+          // mark unanswered as submitted incorrect to close attempt
+          let n=0;
+          for(const id of ALL_GRADED_IDS){
+            if(!state.answers[id]?.submitted){
+              state.answers[id] = { value: state.answers[id]?.value ?? "", submitted:true, correct:false };
+              n++;
+            }
+          }
+          updateHUD(); saveState(); renderNav();
+          toast(n?`Đã chốt. ${n} câu chưa làm được tính 0 điểm.`:"Đã chốt bài.");
+          render();
+        };
+      }
+
+      const btnShowAll=document.getElementById("btnShowAll");
+      if(btnShowAll){
+        btnShowAll.onclick=()=>{
+          if(!state.teacher){ toast("Cần mở khóa chế độ GV để xem toàn bộ đáp án."); return; }
+          // jump to first section and show
+          toast("GV: Bạn có thể bấm “Xem đáp án” ở từng câu / từng dòng matching.");
+        };
+      }
+
+      const btnExport=document.getElementById("btnExport");
+      if(btnExport){
+        btnExport.onclick=()=>{
+          const report = buildExportReport();
+          downloadText("GS7_Unit8_Films_Report.txt", report);
+        };
+      }
+    }, 0);
+
+    return card;
+  }
+
+  return card;
+}
+
+function escapeHTML(s){
+  return (s??"").toString()
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;");
+}
+
+/* =========================
+   6) Detail / Export
+========================= */
+function buildDetailText(){
+  // per section: correct/total (graded only)
+  const lines=[];
+  for(const sec of DATA){
+    let ids=[];
+    for(const b of sec.blocks){
+      if(b.type==="mcqGroup" && b.graded) b.questions.forEach(q=>ids.push(q.id));
+      if(b.type==="fillGroup" && b.graded) b.questions.forEach(q=>ids.push(q.id));
+      if(b.type==="matchSelect" && b.graded) b.pairs.forEach(p=>ids.push(p.id));
+    }
+    if(!ids.length) continue;
+    let correct=0, submitted=0;
+    ids.forEach(id=>{
+      if(state.answers[id]?.submitted) submitted++;
+      if(state.answers[id]?.correct) correct++;
+    });
+    lines.push(`- ${sec.title}: ${correct}/${ids.length} đúng (đã nộp ${submitted}/${ids.length})`);
+  }
+  return lines.join("\n");
+}
+function buildExportReport(){
+  const header = [
+    "Global Success 7 - Unit 8 FILMS",
+    "BÁO CÁO KẾT QUẢ (offline game)",
+    "----------------------------------------",
+    `Thời gian: ${mmss(state.seconds)}`,
+    `Điểm: ${scoreNow()}/${ALL_GRADED_IDS.length}`,
+    `Tiến độ nộp: ${answeredCount()}/${ALL_GRADED_IDS.length}`,
+    "",
+    "CHI TIẾT THEO PHẦN:",
+    buildDetailText(),
+    "",
+    "CHI TIẾT CÂU HỎI (chấm điểm):"
+  ].join("\n");
+
+  const rows=[];
+  for(const id of ALL_GRADED_IDS){
+    const st=state.answers[id]||{};
+    rows.push(`${id}\t${st.submitted?"SUBMITTED":"NOT_SUBMITTED"}\t${st.correct?"CORRECT":"WRONG"}\tUSER="${(st.value??"").toString().replaceAll("\n"," ")}"`);
+  }
+  return header + "\n" + rows.join("\n");
+}
+function downloadText(filename, text){
+  const blob = new Blob([text], {type:"text/plain;charset=utf-8"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href=url; a.download=filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 800);
+}
+
+/* =========================
+   7) Navigation buttons
+========================= */
+document.getElementById("btnPrev").addEventListener("click", ()=>{
+  state.currentSection = Math.max(0, state.currentSection-1);
+  render(); saveState();
+});
+document.getElementById("btnNext").addEventListener("click", ()=>{
+  state.currentSection = Math.min(DATA.length-1, state.currentSection+1);
+  render(); saveState();
+});
+document.getElementById("btnDetail").addEventListener("click", ()=>{
+  state.currentSection = DATA.findIndex(s=>s.id==="FINAL");
+  if(state.currentSection<0) state.currentSection = DATA.length-1;
+  render(); saveState();
+});
+
+document.getElementById("btnSave").addEventListener("click", ()=>{
+  saveState();
+  toast("Đã lưu tiến độ.");
+});
+document.getElementById("btnReset").addEventListener("click", ()=>{
+  if(!confirm("Bạn chắc chắn muốn làm lại toàn bộ? (xóa tiến độ & điểm)")) return;
+  localStorage.removeItem(LS_KEY);
+  location.reload();
+});
+
+document.getElementById("btnTeacher").addEventListener("click", ()=>{
+  const code = document.getElementById("teacherCode").value.trim();
+  if(code === TEACHER_PASS){
+    state.teacher = true;
+    toast("Đã mở khóa chế độ giáo viên.");
+    saveState();
+    render();
+  }else{
+    toast("Sai mã. Vui lòng thử lại.");
+  }
+});
+
+/* =========================
+   8) Timer
+========================= */
+function startTimer(){
+  if(timer) return;
+  timer = setInterval(()=>{
+    state.seconds += 1;
+    updateHUD();
+    // auto-save every 15s
+    if(state.seconds % 15 === 0) saveState();
+  }, 1000);
+}
+
+/* =========================
+   9) Boot
+========================= */
+(function init(){
+  const loaded = loadState();
+  // restore music
+  if(typeof state.volume==="number"){
+    volEl.value = Math.round(state.volume*100);
+  }
+  // IMPORTANT: audio must start after user gesture; so we only set label now
+  document.getElementById("btnMusic").textContent = (musicOn ? "Nhạc: BẬT" : "Nhạc: TẮT");
+
+  // ensure max score display
+  document.getElementById("scoreMax").textContent = ALL_GRADED_IDS.length;
+
+  render();
+  startTimer();
+
+  // If saved says musicOn true, keep state but don't auto-play until user clicks (browser policy).
+  if(musicOn){
+    toast("Nhạc đã được lưu là BẬT. Bấm nút Nhạc để phát (do chính sách trình duyệt).");
+  }
+})();
+</script>
+</body>
+</html>
